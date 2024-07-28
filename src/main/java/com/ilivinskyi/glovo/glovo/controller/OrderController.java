@@ -1,55 +1,68 @@
 package com.ilivinskyi.glovo.glovo.controller;
 
-import com.ilivinskyi.glovo.glovo.models.Order;
+import com.ilivinskyi.glovo.glovo.models.CustomerOrder;
 import com.ilivinskyi.glovo.glovo.models.Product;
 import com.ilivinskyi.glovo.glovo.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrder(@PathVariable Long id) {
-        Order order = orderService.getOrder(id);
-        if (order == null) {
+    public ResponseEntity<CustomerOrder> getOrder(@PathVariable Long id) {
+        CustomerOrder customerOrder = orderService.getOrder(id);
+        if (customerOrder == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(customerOrder);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<CustomerOrder>> getOrders() {
+        List<CustomerOrder> customerOrder = orderService.getAllOrders();
+        if (customerOrder == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(customerOrder);
     }
 
     @PostMapping
-    public ResponseEntity<Order> addOrder(@RequestBody Order order) {
-        Order newOrder = orderService.addOrder(order);
-        return ResponseEntity.ok(newOrder);
+    public ResponseEntity<CustomerOrder> addOrder(@RequestBody CustomerOrder customerOrder) {
+        CustomerOrder newCustomerOrder = orderService.addOrder(customerOrder);
+        return ResponseEntity.ok(newCustomerOrder);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
-        Order updatedOrder = orderService.updateOrder(id, order);
-        return ResponseEntity.ok(updatedOrder);
+    public ResponseEntity<CustomerOrder> updateOrder(@PathVariable Long id, @RequestBody CustomerOrder customerOrder) {
+        CustomerOrder updatedCustomerOrder = orderService.updateOrder(id, customerOrder);
+        return ResponseEntity.ok(updatedCustomerOrder);
     }
 
     @PatchMapping("/{id}/products")
-    public ResponseEntity<Order> addProductToOrder(@PathVariable Long id, @RequestBody Product product) {
-        Order updatedOrder = orderService.addProductToOrder(id, product);
-        if (updatedOrder == null) {
+    public ResponseEntity<CustomerOrder> addProductToOrder(@PathVariable Long id, @RequestBody Product product) {
+        CustomerOrder updatedCustomerOrder = orderService.addProductToOrder(id, product);
+        if (updatedCustomerOrder == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(updatedOrder);
+        return ResponseEntity.ok(updatedCustomerOrder);
     }
 
     @DeleteMapping("/{id}/products/{productId}")
-    public ResponseEntity<Order> removeProductFromOrder(@PathVariable Long id, @PathVariable Long productId) {
-        Order updatedOrder = orderService.removeProductFromOrder(id, productId);
-        if (updatedOrder == null) {
+    public ResponseEntity<CustomerOrder> removeProductFromOrder(@PathVariable Long id, @PathVariable Long productId) {
+        CustomerOrder updatedCustomerOrder = orderService.removeProductFromOrder(id, productId);
+        if (updatedCustomerOrder == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(updatedOrder);
+        return ResponseEntity.ok(updatedCustomerOrder);
     }
 
     @DeleteMapping("/{id}")
